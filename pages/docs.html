@@ -441,6 +441,7 @@ kbd {
       <a class="nav-section-link" href="#s4">4 — Animation Tab</a>
       <div class="nav-sub-links">
         <a class="nav-sub-link" href="#presets">Settings Presets</a>
+        <a class="nav-sub-link" href="#hand-movement-style">Smooth Hand Movement</a>
         <a class="nav-sub-link" href="#basic-styles">Basic Styles</a>
         <a class="nav-sub-link" href="#specialized">Specialized Styles</a>
       </div>
@@ -554,6 +555,7 @@ kbd {
         <li><strong>Switch to an existing project</strong> — click its name in the list.</li>
         <li><strong>Delete a project</strong> — hover over it and click the delete button. This is permanent and cannot be undone.</li>
       </ul>
+      <p class="doc-p">The Projects window also shows the total storage all your saved projects are using, right under the title — handy for keeping an eye on browser storage if you work with a lot of projects.</p>
       <div class="doc-note">Projects are stored in your browser using IndexedDB — they live on your device, not in the cloud. They will not transfer automatically to another device or browser.</div>
 
       <hr class="doc-hr">
@@ -579,7 +581,7 @@ kbd {
             <tr><td><strong>Projects</strong> button</td><td>Opens the Projects modal</td></tr>
             <tr><td>Project name</td><td>Click to rename the current project</td></tr>
             <tr><td><strong>↩ Undo / ↪ Redo</strong></td><td>Undo or redo the last change</td></tr>
-            <tr><td><strong>Export Video</strong></td><td>Opens the Export banner above the canvas</td></tr>
+                        <tr><td><strong>Export Video</strong></td><td>Opens the Export banner above the canvas</td></tr>
           </tbody>
         </table>
       </div>
@@ -617,7 +619,7 @@ kbd {
       <hr class="doc-hr">
 
       <h3 class="doc-h3" id="text">Adding Text</h3>
-      <p class="doc-p">Switch to the <strong>Text</strong> tab in the right panel to add a text layer. Configure your text first, then click "Click canvas to place text" and click anywhere on the canvas to drop it.</p>
+      <p class="doc-p">Switch to the <strong>Text</strong> tab in the right panel to add a text layer. Click the highlighted <strong>"Click canvas to place text"</strong> button at the top of the panel, then click anywhere on the canvas to drop the text there. The button turns green and prompts you while placement is active. Once placed, the text editor opens and you can configure it:</p>
       <ul class="doc-ul">
         <li><strong>Font</strong> — choose from the font picker list</li>
         <li><strong>Size</strong> — 10–400px</li>
@@ -731,6 +733,11 @@ kbd {
         </table>
       </div>
       <p class="doc-p">To save a custom preset, click <strong>"+ Save current settings"</strong> at the bottom of the Presets card. Up to 6 custom presets can be saved.</p>
+
+      <hr class="doc-hr">
+
+      <h3 class="doc-h3" id="hand-movement-style">Smooth Hand Movement</h3>
+      <p class="doc-p">Just below the Presets card, above the Animation/Drawing tab buttons, is a <strong>"Smooth hand movement"</strong> switch (on by default). With it on, the hand glides continuously between positions instead of snapping — most noticeable at higher Hand Speed settings. Turn it off to use the original snap-to-position movement instead. This is a device preference, saved in your browser, and applies the same on both the Animation and Drawing tabs.</p>
 
       <hr class="doc-hr">
 
@@ -918,7 +925,8 @@ kbd {
       <h2 class="section-title"><div class="section-num">6</div> The Bottom Bar</h2>
 
       <h3 class="doc-h3" id="hands">Hand Style</h3>
-      <p class="doc-p">The hand is the graphic that moves across the canvas during animation — the visual element that sells the "someone is drawing this" illusion. Five options are available: <strong>Ghost</strong>, <strong>Hand 1</strong>, <strong>Hand 2</strong>, <strong>Hand 3</strong>, and <strong>Pen</strong>. Ghost means no hand graphic is shown at all — the drawing happens invisibly, hence the name. The other four are different visual styles of a hand or writing instrument. Choose whichever looks right for your animation — there is no functional difference between them beyond appearance.</p>
+      <p class="doc-p">The hand is the graphic that moves across the canvas during animation — the visual element that sells the "someone is drawing this" illusion. Seven options are available: <strong>Ghost</strong>, <strong>Hand 1</strong>, <strong>Hand 2</strong>, <strong>Hand 3</strong>, <strong>Pen</strong>, <strong>Cartoon</strong>, and <strong>Pixel Art</strong>. Ghost means no hand graphic is shown at all — the drawing happens invisibly, hence the name. The rest are different visual styles of a hand or writing instrument. Choose whichever looks right for your animation — there is no functional difference between them beyond appearance.</p>
+      <p class="doc-p">To control how the hand moves rather than how it looks, see <a href="#hand-movement-style">Smooth Hand Movement</a> in Section 4.</p>
 
       <hr class="doc-hr">
 
@@ -955,6 +963,7 @@ kbd {
       <h3 class="doc-h3" id="generate">The Generate Button</h3>
       <p class="doc-p">The <strong>Generate</strong> button is pinned at the bottom of the left sidebar. Clicking it reads all your layers and their settings, builds the animation from scratch, and begins playing it on the canvas.</p>
       <p class="doc-p">Every time you change a setting, you need to click Generate again to see the updated result. The canvas does not update in real time while you adjust settings — Generate is always the step that applies your changes.</p>
+      <div class="doc-tip">The Drawing tab's outline/fill algorithms are heavier than the Animation tab and can briefly make the interface look stuck on slower machines, depending on your settings. Watch the top bar — a small pulsing "Working…" indicator appears there while a Drawing-tab animation is generating. As long as it's pulsing, the app is working, not frozen.</div>
 
       <hr class="doc-hr">
 

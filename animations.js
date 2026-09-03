@@ -1892,9 +1892,13 @@ function _tickAllSlots() {
 
     const nextGroup = (state._groupPos ?? 0) + 1;
     if (nextGroup < (state._animGroups || []).length) {
-      setTimeout(() => _runGroupAt(nextGroup), 200);
+      // Use the live, maintained _runGroupAt (window-scoped, defined in index.html) —
+      // not this file's own closure-local copy, which is kept only for standalone use
+      // of animations.js and has fallen behind the current implementation.
+      setTimeout(() => window._runGroupAt(nextGroup), 200);
     } else {
-      _allLayersDone();
+      // Same reasoning: use the live, maintained _allLayersDone.
+      window._allLayersDone();
     }
     return;
   }
@@ -2210,6 +2214,7 @@ function _allLayersDone() {
     setProgress(1);
     document.getElementById('done-badge').classList.add('show');
     drawSelectionHandles();
+    if (typeof hideTopbarBuffer === 'function') hideTopbarBuffer();
   }
 
   // If the live blend already ran (progress reached 1), just snap to final cleanly.

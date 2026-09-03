@@ -12,6 +12,7 @@
 <meta name="robots" content="index, follow">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="manifest" href="site.webmanifest">
+
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&family=Patrick+Hand&family=Permanent+Marker&family=Roboto:wght@400;700&family=Merriweather:wght@400;700&family=Space+Mono&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -211,6 +212,43 @@ body {
   margin-left: auto;
 }
 
+/* Drawing-tab generation indicator — transform/opacity only (compositor thread),
+   so it keeps animating even when heavy synchronous JS is blocking the main thread.
+   If this stops moving, the tab has actually hung, not just working hard. */
+.topbar-buffer {
+  display: none;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 11px;
+  background: var(--accent-lo);
+  border: 1px solid var(--accent-glo);
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+.topbar-buffer.visible { display: flex; }
+.topbar-buffer-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.35;
+  transform: scale(0.8);
+  animation: topbarBufferBounce 1.1s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+.topbar-buffer-dot:nth-child(2) { animation-delay: 0.15s; }
+.topbar-buffer-dot:nth-child(3) { animation-delay: 0.3s; }
+@keyframes topbarBufferBounce {
+  0%, 80%, 100% { transform: scale(0.8); opacity: 0.35; }
+  40%           { transform: scale(1.15); opacity: 1; }
+}
+.topbar-buffer-label {
+  font-size: 10.5px;
+  font-weight: 500;
+  color: var(--muted-hi);
+  white-space: nowrap;
+}
+
 .version-pill {
   font-size: 9px;
   font-weight: 600;
@@ -222,7 +260,6 @@ body {
   letter-spacing: 0.5px;
   text-transform: uppercase;
 }
-
 
 #btn-export-top {
   display: flex;
@@ -258,6 +295,7 @@ body {
   min-width: 0;
 }
 @keyframes pulse-rec { 0%,100%{opacity:1} 50%{opacity:0.55} }
+
 
 /* ═══════════════════════════════════════════
    PROJECTS MODAL
@@ -307,10 +345,19 @@ body {
   align-items: center;
   justify-content: space-between;
 }
+.projects-header-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
 .projects-header h2 {
   font-size: 16px;
   font-weight: 600;
   color: var(--text);
+}
+.projects-total-size {
+  font-size: 11.5px;
+  color: var(--muted);
 }
 .projects-close-btn {
   width: 28px;
@@ -987,6 +1034,17 @@ body {
 }
 .toggle-label { font-size: 12px; color: var(--text); }
 
+.hand-glide-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  margin: 4px 0 2px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.hand-glide-row .toggle-label { font-size: 12px; font-weight: 500; }
+
 .toggle {
   width: 40px;
   height: 22px;
@@ -1323,6 +1381,36 @@ input[type="number"]:focus { border-color: var(--accent); }
 }
 
 /* ── Text Panel styles ── */
+.tp-place-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 9px;
+  font-family: 'Geist', 'DM Sans', sans-serif;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.12s, box-shadow 0.15s;
+  animation: tpPlacePulse 2.2s ease-in-out infinite;
+}
+.tp-place-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+}
+.tp-place-btn.active {
+  background: var(--success);
+  animation: none;
+}
+@keyframes tpPlacePulse {
+  0%, 100% { box-shadow: 0 0 0 0 var(--accent-lo); }
+  50%      { box-shadow: 0 0 0 6px var(--accent-lo); }
+}
 .tp-label {
   font-size: 9px;
   font-weight: 600;
@@ -3180,14 +3268,16 @@ input[type="number"]:focus { border-color: var(--accent); }
   <div class="desktop-only-card">
     <h1>Inkplainer works best on a desktop browser</h1>
     <p>This is a canvas-based animation editor with side panels, drag controls, video recording, and project storage. Please open it on a laptop or desktop screen for the full app.</p>
+        
     <p>Please open Inkplainer on a laptop or desktop screen for the full app.</p>
-  </div>
+      </div>
 </div>
 
 
 
 <!-- ═══════════════ TOP BAR ═══════════════ -->
 <div id="topbar">
+    
   <div class="topbar-logo">
     <div class="topbar-logo-icon">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -3196,7 +3286,7 @@ input[type="number"]:focus { border-color: var(--accent); }
     </div>
     <span class="topbar-wordmark">Inkplainer</span>
   </div>
-  <div class="topbar-divider"></div>
+    <div class="topbar-divider"></div>
   
   <button id="btn-projects" onclick="openProjectsModal()">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -3231,8 +3321,19 @@ input[type="number"]:focus { border-color: var(--accent); }
     <span id="topbar-size-display">1280 × 720</span>
     <span id="topbar-anim-label">Scanner</span>
   </div>
+
+  <!-- Drawing-tab generation indicator: pure transform/opacity animation so it keeps
+       moving even while the main thread is busy — lets you tell "still working" from
+       "actually frozen" during heavy Drawing-tab generation. -->
+  <div id="topbar-buffer" class="topbar-buffer" aria-hidden="true">
+    <span class="topbar-buffer-dot"></span>
+    <span class="topbar-buffer-dot"></span>
+    <span class="topbar-buffer-dot"></span>
+    <span class="topbar-buffer-label">Working…</span>
+  </div>
+
   <div class="topbar-right">
-    <span id="export-status-top"></span>
+        <span id="export-status-top"></span>
     <button id="btn-export-top" onclick="openExportBanner()">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       Export Video
@@ -3247,7 +3348,10 @@ input[type="number"]:focus { border-color: var(--accent); }
 <div id="projects-modal">
   <div class="projects-window" onclick="event.stopPropagation()">
     <div class="projects-header">
-      <h2>My Projects</h2>
+      <div class="projects-header-titles">
+        <h2>My Projects</h2>
+        <span class="projects-total-size" id="projects-total-size">0 B used</span>
+      </div>
       <button class="projects-close-btn" onclick="closeProjectsModal()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -3315,6 +3419,12 @@ input[type="number"]:focus { border-color: var(--accent); }
       </div>
 
     </div>
+  </div>
+
+  <!-- Hand movement style — global preference, applies to both Animation and Drawing tabs -->
+  <div class="hand-glide-row">
+    <span class="toggle-label">Smooth hand movement</span>
+    <button class="toggle on" id="hand-glide-toggle" onclick="toggleHandGlide()" title="Smooth: glides between positions. Off: matches the original snap-to-position movement."></button>
   </div>
 
   <!-- ── Sticky Tab Switcher ── -->
@@ -3690,6 +3800,8 @@ input[type="number"]:focus { border-color: var(--accent); }
     <div class="hand-opt" data-hand="custom2"></div>
     <div class="hand-opt" data-hand="custom3"></div>
     <div class="hand-opt" data-hand="custom4"></div>
+    <div class="hand-opt" data-hand="custom5"></div>
+    <div class="hand-opt" data-hand="custom6"></div>
     <div class="ratio-btn active" data-ratio="16:9"  onclick="selectRatio(this)"></div>
     <div class="ratio-btn"        data-ratio="9:16"  onclick="selectRatio(this)"></div>
     <div class="ratio-btn"        data-ratio="1:1"   onclick="selectRatio(this)"></div>
@@ -3861,6 +3973,8 @@ input[type="number"]:focus { border-color: var(--accent); }
         <div class="bb-hand-pill"          data-hand="custom2" onclick="bbSelectHand(this)">Hand 2</div>
         <div class="bb-hand-pill"          data-hand="custom3" onclick="bbSelectHand(this)">Hand 3</div>
         <div class="bb-hand-pill"          data-hand="custom4" onclick="bbSelectHand(this)">Pen</div>
+        <div class="bb-hand-pill"          data-hand="custom5" onclick="bbSelectHand(this)">Cartoon</div>
+        <div class="bb-hand-pill"          data-hand="custom6" onclick="bbSelectHand(this)">Pixel Art</div>
       </div>
     </div>
 
@@ -4005,11 +4119,11 @@ input[type="number"]:focus { border-color: var(--accent); }
     <!-- TEXT PANEL -->
     <div id="text-panel" style="display:none">
 
-      <!-- Click-to-place hint -->
-      <div id="text-place-hint" style="display:flex;align-items:center;gap:8px;margin-top:10px;padding:9px 11px;background:var(--accent-lo);border:1px solid var(--accent-glo);border-radius:9px;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-        <span style="font-size:11px;color:var(--muted-hi);line-height:1.4;">Click anywhere on the canvas to place text. Double-click a text layer to edit.</span>
-      </div>
+      <!-- Click-to-place button (the actual action — placed first so it can't be missed) -->
+      <button id="tp-place-btn" class="tp-place-btn" style="margin-top:10px" onclick="activateTextPlacement()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        <span id="tp-place-btn-label">Click canvas to place text</span>
+      </button>
 
       <!-- Font family -->
       <div style="margin-top:12px">
@@ -4043,19 +4157,19 @@ input[type="number"]:focus { border-color: var(--accent); }
 
       <!-- Line height + Letter spacing -->
       <div style="margin-top:10px;display:flex;gap:10px;">
-        <div style="flex:1">
+        <div style="flex:1;min-width:0;">
           <div class="tp-label">Line height</div>
           <div style="display:flex;align-items:center;gap:5px;margin-top:4px;">
             <input type="range" id="tp-lineheight" min="0.8" max="2.5" step="0.05" value="1.3"
-              style="flex:1;accent-color:var(--accent);" oninput="updateTextState();document.getElementById('tp-lh-val').textContent=parseFloat(this.value).toFixed(2)">
+              style="flex:1;min-width:0;accent-color:var(--accent);" oninput="updateTextState();document.getElementById('tp-lh-val').textContent=parseFloat(this.value).toFixed(2)">
             <span id="tp-lh-val" style="font-size:10px;color:var(--muted);min-width:28px;text-align:right;font-variant-numeric:tabular-nums;">1.30</span>
           </div>
         </div>
-        <div style="flex:1">
+        <div style="flex:1;min-width:0;">
           <div class="tp-label">Spacing</div>
           <div style="display:flex;align-items:center;gap:5px;margin-top:4px;">
             <input type="range" id="tp-spacing" min="-5" max="30" step="0.5" value="0"
-              style="flex:1;accent-color:var(--accent);" oninput="updateTextState();document.getElementById('tp-sp-val').textContent=parseFloat(this.value).toFixed(1)">
+              style="flex:1;min-width:0;accent-color:var(--accent);" oninput="updateTextState();document.getElementById('tp-sp-val').textContent=parseFloat(this.value).toFixed(1)">
             <span id="tp-sp-val" style="font-size:10px;color:var(--muted);min-width:28px;text-align:right;font-variant-numeric:tabular-nums;">0.0</span>
           </div>
         </div>
@@ -4080,11 +4194,6 @@ input[type="number"]:focus { border-color: var(--accent); }
         </div>
       </div>
 
-      <!-- Add button -->
-      <button class="btn-secondary" style="margin-top:12px" onclick="activateTextPlacement()">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="margin-right:5px;vertical-align:-1px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Click canvas to place text
-      </button>
     </div>
   </div>
 
@@ -4706,6 +4815,12 @@ function deleteProject(projectId, event) {
 }
 
 // Refresh projects list
+function formatBytes(bytes) {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
 function refreshProjectsList() {
   if (!db) return;
   
@@ -4717,7 +4832,13 @@ function refreshProjectsList() {
   request.onsuccess = () => {
     const projects = request.result;
     const listEl = document.getElementById('projects-list');
-    
+    const totalSizeEl = document.getElementById('projects-total-size');
+
+    const totalBytes = projects.reduce((sum, project) => {
+      return sum + new Blob([JSON.stringify(project.state || {})]).size;
+    }, 0);
+    if (totalSizeEl) totalSizeEl.textContent = `${formatBytes(totalBytes)} used`;
+
     if (projects.length === 0) {
       listEl.innerHTML = `
         <div class="projects-empty">
@@ -4751,10 +4872,7 @@ function refreshProjectsList() {
       // Calculate project size
       const stateJSON = JSON.stringify(project.state || {});
       const sizeBytes = new Blob([stateJSON]).size;
-      let sizeStr;
-      if (sizeBytes < 1024) sizeStr = `${sizeBytes} B`;
-      else if (sizeBytes < 1024 * 1024) sizeStr = `${(sizeBytes / 1024).toFixed(1)} KB`;
-      else sizeStr = `${(sizeBytes / (1024 * 1024)).toFixed(1)} MB`;
+      const sizeStr = formatBytes(sizeBytes);
       
       const isActive = project.id === currentProjectId;
       
@@ -5456,14 +5574,6 @@ window.addEventListener('load', () => {
       hint.style.display   = 'none';
       document.getElementById('layer-context-name').textContent = layer.name;
 
-      const setSlider = (id2, valId, val) => {
-        const el = document.getElementById(id2);
-        if (el) { el.value = val; document.getElementById(valId).textContent = val; updateSliderFill(el); }
-      };
-      setSlider('speed-slider',      'speed-val',      layer.speed      ?? 40);
-      setSlider('hand-speed-slider', 'hand-speed-val', layer.handSpeed  ?? 6);
-      setSlider('tile-slider',       'tile-val',       layer.chunks     ?? 30);
-      setSlider('spec-tile-slider',  'spec-tile-val',  layer.specChunks ?? 35);
       // BUG FIX: sync zigzag toggle per-layer
       const zigzagVal2 = (layer.zigzag !== undefined) ? layer.zigzag : state.zigzag;
       document.getElementById('zigzag-toggle').classList.toggle('on', zigzagVal2);
@@ -5481,6 +5591,12 @@ window.addEventListener('load', () => {
       const isSpecText2   = anim === 'spec-text';
       const isOutline2    = anim === 'illustfill' || anim === 'outlinefill';
       const isOutlineOnly2= anim === 'outlineonly';
+      // IMPORTANT: panel visibility must be resolved BEFORE the slider .value
+      // assignments below — setting a native <input type="range">'s value while
+      // its panel is still display:none, then revealing the panel right after,
+      // can leave the visual thumb stuck at its old position even though
+      // .value and the fill (--pct) are already correct. This was the actual
+      // cause of the "handle doesn't move but the track fill does" bug.
       document.getElementById('scanner-opts').style.display         = isScanner        ? 'block' : 'none';
       document.getElementById('tile-opts').style.display            = isChunk          ? 'block' : 'none';
       document.getElementById('spec-tile-opts').style.display       = (isSpec && !isSpecText2) ? 'block' : 'none';
@@ -5489,6 +5605,17 @@ window.addEventListener('load', () => {
       document.getElementById('card-textopts').style.display        = isSpecText2      ? 'block' : 'none';
       const isOutlineMode2 = isOutline2 || isOutlineOnly2 || isSpecText2;
       document.getElementById('outline-detect-opts').style.display  = isOutlineMode2   ? 'block' : 'none';
+
+      // Sync sliders now that their panels are already in their final visible/hidden state
+      const setSlider = (id2, valId, val) => {
+        const el = document.getElementById(id2);
+        if (el) { el.value = val; document.getElementById(valId).textContent = val; updateSliderFill(el); }
+      };
+      setSlider('speed-slider',      'speed-val',      layer.speed      ?? 40);
+      setSlider('hand-speed-slider', 'hand-speed-val', layer.handSpeed  ?? 6);
+      setSlider('tile-slider',       'tile-val',       layer.chunks     ?? 30);
+      setSlider('spec-tile-slider',  'spec-tile-val',  layer.specChunks ?? 35);
+
       // Auto-switch sidebar tab to match selected layer's anim
       switchSidebarTab(_OUTLINE_ANIM_MODES.has(anim) ? 'drawing' : 'animation');
       if (isOutlineMode2) {
@@ -5523,12 +5650,6 @@ window.addEventListener('load', () => {
           infoBox2.style.display = 'none';
         }
       }
-
-      // BUG FIX: update slider fill visual state on layer switch
-      ['speed-slider','hand-speed-slider','tile-slider','spec-tile-slider'].forEach(sid => {
-        const sel2 = document.getElementById(sid);
-        if (sel2) updateSliderFill(sel2);
-      });
 
       const hand = layer.hand || state.hand;
       document.querySelectorAll('.hand-opt').forEach(el => {
@@ -5597,6 +5718,8 @@ const state = {
   _groupIdCounter: 0,
   // ─── PRESETS ───
   activePresetId: null,  // id of last applied preset; cleared when any setting is changed manually
+  // ─── HAND MOVEMENT STYLE (global user preference, not saved per-project) ───
+  handGlideEnabled: true,
 };
 
 // ─── CANVAS SETUP ───
@@ -5885,7 +6008,33 @@ function syncSidebarToLayer(id) {
   hint.style.display   = 'none';
   document.getElementById('layer-context-name').textContent = layer.name;
 
-  // Sync sliders
+  // BUG FIX: anim was used but never declared — derive it from the layer or global state
+  const anim = layer.animStyle || state.animStyle || 'scanner';
+  // Keep state.animStyle in sync with the selected layer
+  state.animStyle = anim;
+  document.querySelectorAll('.anim-opt').forEach(el => {
+    el.classList.toggle('selected', el.dataset.anim === anim);
+  });
+  // Show/hide scanner/tile opts based on synced anim.
+  // IMPORTANT: this must happen BEFORE the slider .value assignments below —
+  // setting a native <input type="range">'s value while its panel is still
+  // display:none, then revealing the panel right after, can leave the visual
+  // thumb stuck at its old position even though .value/the fill are correct.
+  const isScanner     = anim === 'scanner';
+  const isChunk       = anim === 'chunkjump' || anim === 'scribble';
+  const isSpec        = anim.startsWith('spec-');
+  const isOutline     = anim === 'illustfill' || anim === 'outlinefill';
+  const isOutlineOnly = anim === 'outlineonly';
+  document.getElementById('scanner-opts').style.display         = isScanner     ? 'block' : 'none';
+  document.getElementById('tile-opts').style.display            = isChunk       ? 'block' : 'none';
+  document.getElementById('spec-tile-opts').style.display       = isSpec        ? 'block' : 'none';
+  // BUG FIX: these cards were never synced when switching layers
+  document.getElementById('card-illustopts').style.display      = isOutline     ? 'block' : 'none';
+  document.getElementById('card-outlineonlyopts').style.display = isOutlineOnly ? 'block' : 'none';
+  const isDetectMode = isOutline || isOutlineOnly || anim === 'spec-text';
+  document.getElementById('outline-detect-opts').style.display  = isDetectMode  ? 'block' : 'none';
+
+  // Sync sliders (panels above are already in their final visible/hidden state now)
   const setSlider = (id, valId, val) => {
     const el = document.getElementById(id);
     if (el) {
@@ -5901,27 +6050,6 @@ function syncSidebarToLayer(id) {
   // BUG FIX: sync zigzag toggle to per-layer state
   const zigzagVal = (layer.zigzag !== undefined) ? layer.zigzag : state.zigzag;
   document.getElementById('zigzag-toggle').classList.toggle('on', zigzagVal);
-  // BUG FIX: anim was used but never declared — derive it from the layer or global state
-  const anim = layer.animStyle || state.animStyle || 'scanner';
-  // Keep state.animStyle in sync with the selected layer
-  state.animStyle = anim;
-  document.querySelectorAll('.anim-opt').forEach(el => {
-    el.classList.toggle('selected', el.dataset.anim === anim);
-  });
-  // Show/hide scanner/tile opts based on synced anim
-  const isScanner     = anim === 'scanner';
-  const isChunk       = anim === 'chunkjump' || anim === 'scribble';
-  const isSpec        = anim.startsWith('spec-');
-  const isOutline     = anim === 'illustfill' || anim === 'outlinefill';
-  const isOutlineOnly = anim === 'outlineonly';
-  document.getElementById('scanner-opts').style.display         = isScanner     ? 'block' : 'none';
-  document.getElementById('tile-opts').style.display            = isChunk       ? 'block' : 'none';
-  document.getElementById('spec-tile-opts').style.display       = isSpec        ? 'block' : 'none';
-  // BUG FIX: these cards were never synced when switching layers
-  document.getElementById('card-illustopts').style.display      = isOutline     ? 'block' : 'none';
-  document.getElementById('card-outlineonlyopts').style.display = isOutlineOnly ? 'block' : 'none';
-  const isDetectMode = isOutline || isOutlineOnly || anim === 'spec-text';
-  document.getElementById('outline-detect-opts').style.display  = isDetectMode  ? 'block' : 'none';
   switchSidebarTab(_OUTLINE_ANIM_MODES.has(anim) ? 'drawing' : 'animation');
   if (isDetectMode) {
     syncDetectSlider((layer?.outlineDetect ?? state.outlineDetect) ?? 50);
@@ -5974,8 +6102,32 @@ function getAnimOrder() {
   return [...ordered, ...unordered];
 }
 
+// Drawing-tab generation indicator — see .topbar-buffer CSS for why transform/opacity.
+function showTopbarBuffer() {
+  const el = document.getElementById('topbar-buffer');
+  if (el) el.classList.add('visible');
+}
+function hideTopbarBuffer() {
+  const el = document.getElementById('topbar-buffer');
+  if (el) el.classList.remove('visible');
+}
+function _isDrawingGeneration() {
+  return getAnimOrder().some(l => _OUTLINE_ANIM_MODES.has(l.animStyle || state.animStyle));
+}
+
 function generate() {
   if (state.layers.length === 0) { showToast('Upload at least one image first'); return; }
+  if (_isDrawingGeneration()) {
+    showTopbarBuffer();
+    // Two rAFs guarantee the browser has actually painted the indicator before the
+    // heavy synchronous outline/fill setup below runs and blocks the main thread.
+    requestAnimationFrame(() => requestAnimationFrame(_generateNow));
+  } else {
+    _generateNow();
+  }
+}
+
+function _generateNow() {
   // Commit any open text edit before generating
   closeTextEditor(true);
   deactivateTextPlacement();
@@ -5986,6 +6138,10 @@ function generate() {
   state._revealFinalCanvas = null;
   state._dissolveMap   = null;
   state._animProgress  = 0;
+  // Reset the hand-glide smoothing position (see drawHand) so a fresh run
+  // never tries to glide the hand in from wherever the last run left it.
+  state._handGX = null;
+  state._handGY = null;
   ctx = _mainCtx;
 
   // Build ordered list then group by animOrder (same number → run simultaneously)
@@ -6150,6 +6306,12 @@ function _allLayersDone() {
 
   function _snap() {
     if (anyOutlineNoReveal) {
+      // At least one layer has "reveal original image" off — bgCanvas already
+      // holds the correct per-layer baked result (drawn-only for that layer,
+      // raw image for any other layer that doesn't opt out), so just draw it
+      // and stop. BUG FIX: this used to fall through into the raw-image redraw
+      // below unconditionally, painting the original photo back over the
+      // drawn-only result even with the checkbox off.
       if (state.bgCanvas) {
         const _tmpBg = state.bgCanvas; state.bgCanvas = null;
         fillBg(_mainCtx);
@@ -6158,13 +6320,19 @@ function _allLayersDone() {
         fillBg(_mainCtx);
       }
       if (state.bgCanvas) _mainCtx.drawImage(state.bgCanvas, 0, 0);
+    } else {
+      // Nothing is opting out of reveal — safe to draw every layer's raw image directly.
+      state.bgCanvas = null;
+      redrawLayersOnCanvas();
     }
-    state.layers.filter(l => l.visible !== false).forEach(l => {
-      _mainCtx.save();
-      _mainCtx.globalAlpha = l.opacity ?? 1;
-      _mainCtx.drawImage(l.img, l.x, l.y, l.w, l.h);
-      _mainCtx.restore();
-    });
+    // BUG FIX: on Drawing-tab styles, the last frame draws the hand and THEN
+    // calls finishAnim() — whose own hctx.clearRect() call fires while
+    // _tickAllSlots has hctx.clearRect temporarily disabled (so parallel
+    // layers can each draw a hand without erasing one another mid-frame).
+    // That leaves the hand permanently stuck on screen. This is the first
+    // point after that suppression has been lifted, so it's the reliable
+    // place to actually clear it.
+    hctx.clearRect(0, 0, state.canvasW, state.canvasH);
   }
 
   if (!shouldReveal) {
@@ -6173,6 +6341,7 @@ function _allLayersDone() {
     document.getElementById('done-badge').classList.add('show');
     document.getElementById('anim-style-label').textContent = '';
     state.done = true;
+    hideTopbarBuffer();
     return;
   }
 
@@ -6189,6 +6358,7 @@ function _allLayersDone() {
       document.getElementById('done-badge').classList.add('show');
       document.getElementById('anim-style-label').textContent = '';
       state.done = true;
+      hideTopbarBuffer();
       return;
     }
     const t = ease(el);
@@ -7868,6 +8038,22 @@ function redrawWithBg() {
   });
   drawSelectionHandles();
 }
+function toggleHandGlide() {
+  state.handGlideEnabled = !state.handGlideEnabled;
+  document.getElementById('hand-glide-toggle').classList.toggle('on', state.handGlideEnabled);
+  try { localStorage.setItem(HAND_GLIDE_KEY, state.handGlideEnabled ? '1' : '0'); } catch (e) {}
+}
+// Restore the user's saved hand-movement preference (defaults to smooth/on)
+const HAND_GLIDE_KEY = 'inkplainer_hand_glide';
+(function initHandGlidePref() {
+  try {
+    const saved = localStorage.getItem(HAND_GLIDE_KEY);
+    if (saved !== null) state.handGlideEnabled = saved === '1';
+  } catch (e) {}
+  const el = document.getElementById('hand-glide-toggle');
+  if (el) el.classList.toggle('on', state.handGlideEnabled);
+})();
+
 function toggleZigzag() {
   pushUndoSnapshot();
   clearActivePreset();
@@ -8118,11 +8304,21 @@ function activateTextPlacement() {
   _ts.placing = true;
   _ts.editingId = null;
   document.getElementById('canvas-wrapper').classList.add('text-place-mode');
+  const btn = document.getElementById('tp-place-btn');
+  if (btn) {
+    btn.classList.add('active');
+    document.getElementById('tp-place-btn-label').textContent = 'Click on the canvas…';
+  }
 }
 
 function deactivateTextPlacement() {
   _ts.placing = false;
   document.getElementById('canvas-wrapper').classList.remove('text-place-mode');
+  const btn = document.getElementById('tp-place-btn');
+  if (btn) {
+    btn.classList.remove('active');
+    document.getElementById('tp-place-btn-label').textContent = 'Click canvas to place text';
+  }
 }
 
 // ── Open editor at a canvas-space position ────────────────────────────────
@@ -8619,6 +8815,7 @@ function resetAnim() {
   state._slotMode     = false;
   ctx = _mainCtx;
   state.playing=false; state.done=false;
+  hideTopbarBuffer();
   state.revealCanvas=null;
   state.edgeCanvas=null;
   state.ofOutlineCanvas=null; state.ofColorCanvas=null;
@@ -8814,15 +9011,53 @@ document.getElementById('progress-track').addEventListener('click', seekAnim);
 // ─── HAND DRAWING ───
 function drawHand(c,tipX,tipY,dir,style) {
   if (style === 'ghost') return;
+
+  // ── Smooth hand glide (toggleable — see "Smooth hand movement" switch) ──
+  // At high hand-speed settings, the tick functions can jump the target tip
+  // position by a large distance in a single frame (ink-reveal speed and
+  // hand speed share the same slider). Drawing the hand directly at that
+  // raw, teleporting position is what made fast movement look bad — no
+  // amount of blur fixes a sprite that's jumping between distant points.
+  // Instead, glide the actually-rendered hand toward the target at a fixed,
+  // comfortable max speed per frame, so it always reads as continuous
+  // motion no matter how fast the ink itself is revealing. Glide state is
+  // kept on the active slot (state._currentSlot) so parallel layers each
+  // glide independently; falls back to global state for the legacy
+  // non-slot path.
+  let drawX = tipX, drawY = tipY;
+  if (state.handGlideEnabled) {
+    const glideHolder = state._currentSlot || state;
+    const MAX_GLIDE_PX = 34; // px/frame cap — tuned to look brisk but smooth
+    if (glideHolder._handGX == null) {
+      // First draw for this run/slot — nothing to glide from yet, snap directly.
+      glideHolder._handGX = tipX;
+      glideHolder._handGY = tipY;
+    } else {
+      const dx = tipX - glideHolder._handGX;
+      const dy = tipY - glideHolder._handGY;
+      const dist = Math.hypot(dx, dy);
+      if (dist <= MAX_GLIDE_PX) {
+        glideHolder._handGX = tipX;
+        glideHolder._handGY = tipY;
+      } else {
+        const t = MAX_GLIDE_PX / dist;
+        glideHolder._handGX += dx * t;
+        glideHolder._handGY += dy * t;
+      }
+    }
+    drawX = glideHolder._handGX;
+    drawY = glideHolder._handGY;
+  }
+
   c.save();
   // Always draw as right hand — no flipping based on movement direction.
-  const hx=tipX-35, hy=tipY-30;
-  
+  const hx=drawX-35, hy=drawY-30;
+
   // Check if it's a custom hand; fall back to custom1 if style is unknown
   if (CUSTOM_HANDS[style]) {
-    drawCustomHand(c, hx, hy, tipX, tipY, style);
+    drawCustomHand(c, hx, hy, drawX, drawY, style);
   } else {
-    drawCustomHand(c, hx, hy, tipX, tipY, 'custom1');
+    drawCustomHand(c, hx, hy, drawX, drawY, 'custom1');
   }
   c.restore();
 }
@@ -8880,6 +9115,28 @@ const CUSTOM_HANDS = {
       '720v': { path: 'images/hand4vertical-720p.png', width: 432, height: 768, tipX: 81, tipY: 628 },  
       '1080v': { path: 'images/hand4vertical-1080p.png', width: 450, height: 750, tipX: 225, tipY: 150 },
       '1440v': { path: 'images/hand4vertical-1440p.png', width: 864, height: 1536, tipX: 175, tipY: 1213 }, 
+    }
+  },
+  'custom5': {
+    name: 'Cartoon',
+    images: {
+      720: { path: 'images/hand5-720p.png', width: 180, height: 320, tipX: 0, tipY: 49 },
+      1080: { path: 'images/hand5-1080p.png', width: 270, height: 480, tipX: 1, tipY: 75 },
+      1440: { path: 'images/hand5-1440p.png', width: 360, height: 640, tipX: 1, tipY: 101 },
+      '720v': { path: 'images/hand5vertical-720p.png', width: 180, height: 320, tipX: 0, tipY: 49 },
+      '1080v': { path: 'images/hand5vertical-1080p.png', width: 270, height: 480, tipX: 1, tipY: 75 },
+      '1440v': { path: 'images/hand5vertical-1440p.png', width: 360, height: 640, tipX: 1, tipY: 101 },
+    }
+  },
+  'custom6': {
+    name: 'Pixel Art',
+    images: {
+      720: { path: 'images/hand6-720p.png', width: 180, height: 320, tipX: 19, tipY: 94 },
+      1080: { path: 'images/hand6-1080p.png', width: 270, height: 480, tipX: 29, tipY: 141 },
+      1440: { path: 'images/hand6-1440p.png', width: 360, height: 640, tipX: 34, tipY: 176 },
+      '720v': { path: 'images/hand6vertical-720p.png', width: 180, height: 320, tipX: 19, tipY: 94 },
+      '1080v': { path: 'images/hand6vertical-1080p.png', width: 270, height: 480, tipX: 29, tipY: 141 },
+      '1440v': { path: 'images/hand6vertical-1440p.png', width: 360, height: 640, tipX: 34, tipY: 176 },
     }
   }
 };
@@ -10556,8 +10813,9 @@ if (_layerListEl) {
     <div class="welcome-footer">
       <button class="welcome-btn" onclick="closeWelcomeModal(true)">Show me around →</button>
       <button class="welcome-skip" onclick="closeWelcomeModal(false)">Skip — I'll explore on my own</button>
+            
       <p class="welcome-privacy">Your content never leaves your device.</p>
-    </div>
+          </div>
   </div>
 </div>
 
@@ -10632,6 +10890,7 @@ function closeWelcomeModal(startTour) {
     localStorage.setItem(OB_KEY, '1');
   }
 }
+
 
 function obStart() {
   obActive = true;
@@ -10760,6 +11019,7 @@ function obEnd() {
   obActive = false;
   localStorage.setItem(OB_KEY, '1');
 }
+
 
 // Init — show welcome modal only on first visit
 (function initOnboarding() {

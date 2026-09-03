@@ -17,11 +17,12 @@ Turn images and text into hand-drawn explainer videos — no sign-up, no waterma
 - **Multiple animation styles** — Chunk Jump, Scanner, Contour, Outline Chunks, plus 7 subject-aware Specialized styles (Human, Animal, Portrait, Vehicle, Building, Landscape, Spiral)
 - **Advanced drawing control** — 5 stroke styles, 4 outline detection algorithms, 3 coloring styles, and 6 image reveal animations
 - **Layer system** — stack images and text layers, set animation order, animate them in sequence or in parallel
+- **Smooth, adjustable hand movement** — the hand glides continuously across the canvas by default, with a switch to revert to the original snap-to-position movement if you prefer it
 - **Slicer tool** — cut any image into regions using Grid, Rectangle, or Freehand mode; each region becomes its own independently animated layer
 - **Text layers** — place styled text directly on the canvas with font picker, size, bold/italic, alignment, line-height, letter spacing, and color controls
 - **Export as MP4 or WebM** — record and download at 720p, 1080p, or 1440p
 - **Export final frame as PNG** — grab a still of the finished animation in one click
-- **Auto-save projects** — every change is saved to your browser automatically
+- **Auto-save projects** — every change is saved to your browser automatically; the Projects window shows total storage used across all your saved projects
 - **Private by design** — no accounts, no analytics, no tracking; all processing happens locally on your device
 
 ---
@@ -93,7 +94,7 @@ When Generate runs, layers animate one after another in the order you define. As
 
 > PNG files with transparency work best with the Drawing tab — transparent areas give the edge-detection a clean boundary to work with.
 
-**Adding text** — switch to the Text tab in the right panel. Configure your text first, then click "Click canvas to place text" and click anywhere on the canvas to drop it. Double-click any text layer on the canvas to edit it. Press `Ctrl+Enter` to confirm or `Escape` to cancel.
+**Adding text** — switch to the Text tab in the right panel. Click the highlighted "Click canvas to place text" button at the top of the panel, then click anywhere on the canvas to drop the text there — the button turns green while placement is active. Double-click any text layer on the canvas to edit it. Press `Ctrl+Enter` to confirm or `Escape` to cancel.
 
 Text options:
 
@@ -151,6 +152,8 @@ The Animation tab is the starting point for most projects. Pick a style, optiona
 
 You can also save up to 6 custom presets by clicking "+ Save current settings" at the bottom of the Presets card.
 
+**Smooth Hand Movement** — just below the Presets card, above the Animation/Drawing tab buttons, is a "Smooth hand movement" switch (on by default). With it on, the hand glides continuously between positions instead of snapping — most noticeable at higher Hand Speed settings. Turn it off for the original snap-to-position movement. This is a browser-saved device preference, not a per-project setting.
+
 **Basic styles:**
 
 | Style | What it does |
@@ -183,6 +186,8 @@ The **Chunks slider (6–80)** appears for Chunk Jump and Outline Chunks. Low va
 The Drawing tab controls how the drawing *looks* — stroke character, outline detection quality, coloring fills, and image reveal. It works differently from the Animation tab in one important way: **the Drawing tab never reveals the original image during the drawing process**. Instead, it actively draws strokes, outlines, and fills from scratch — interpreting your image's edges and colors as drawing instructions. The result is a drawn version of your image, not the original.
 
 > The Drawing tab works best with clear illustrations, cartoon-style art, and vector-style images with well-defined edges. For photographs, the Animation tab is the better choice.
+
+> The Drawing tab's outline/fill algorithms are heavier than the Animation tab and can briefly make the interface look stuck on slower machines, depending on your settings. Watch the top bar — a small pulsing "Working…" indicator appears there while a Drawing-tab animation is generating. As long as it's pulsing, the app is working, not frozen.
 
 **Outline Animation Modes:**
 
@@ -242,7 +247,7 @@ The Drawing tab controls how the drawing *looks* — stroke character, outline d
 
 The bottom bar contains global settings that apply to the whole animation.
 
-**Hand Style** — the graphic that moves across the canvas during animation, selling the "someone is drawing this" illusion. Options: Ghost (no hand graphic), Hand 1, Hand 2, Hand 3, Pen. There is no functional difference between them beyond appearance.
+**Hand Style** — the graphic that moves across the canvas during animation, selling the "someone is drawing this" illusion. Options: Ghost (no hand graphic), Hand 1, Hand 2, Hand 3, Pen, Cartoon, Pixel Art. There is no functional difference between them beyond appearance. To change *how* the hand moves rather than how it looks, see the Smooth Hand Movement switch above the Animation/Drawing tabs.
 
 **Speed Controls:**
 - **Reveal Speed (1–100)** — how many pixels of image content are revealed per animation tick. The primary control for how long the animation takes
