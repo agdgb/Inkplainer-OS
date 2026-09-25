@@ -1,0 +1,183 @@
+/* ═══════════════════════════════════════════
+   SCENE STRIP & MULTI-SCENE STYLING
+   Doodle Studio / Inkplainer Multi-Scene Engine
+═══════════════════════════════════════════ */
+
+#scene-strip {
+  position: absolute;
+  bottom: 66px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-hi);
+  border-radius: 14px;
+  padding: 5px 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 90%;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.05);
+  z-index: 45;
+  transition: all 0.2s ease;
+}
+
+.scene-strip-header {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 0 6px 0 3px;
+  border-right: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.scene-strip-title {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  color: var(--muted-hi);
+  text-transform: uppercase;
+}
+
+.scene-strip-badge {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+#scene-tabs-container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  max-width: 580px;
+  padding: 2px 1px;
+  scrollbar-width: thin;
+}
+
+#scene-tabs-container::-webkit-scrollbar {
+  height: 3px;
+}
+#scene-tabs-container::-webkit-scrollbar-thumb {
+  background: var(--border-hi);
+  border-radius: 2px;
+}
+
+.scene-pill {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.scene-pill:hover {
+  background: var(--panel);
+  border-color: var(--border-hi);
+}
+
+.scene-pill.active {
+  background: #ffffff;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent), 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.scene-pill.playing-scene {
+  border-color: var(--success);
+  box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.35);
+  animation: scene-pulse 1.2s infinite alternate;
+}
+
+@keyframes scene-pulse {
+  from { box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.2); }
+  to { box-shadow: 0 0 0 5px rgba(22, 163, 74, 0.5); }
+}
+
+.scene-pill-name {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.scene-pill-layers {
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--muted);
+  background: var(--surface-2);
+  padding: 1px 5px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.scene-transition-select {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--muted-hi);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1px 3px;
+  outline: none;
+  cursor: pointer;
+}
+.scene-transition-select:hover {
+  border-color: var(--border-hi);
+  color: var(--text);
+}
+
+.scene-pill-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: 2px;
+}
+
+.scene-mini-btn {
+  background: none;
+  border: none;
+  color: var(--muted);
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 10px;
+  transition: all 0.12s;
+}
+.scene-mini-btn:hover {
+  color: var(--accent2);
+  background: var(--accent-lo);
+}
+
+.scene-add-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--surface-1);
+  border: 1px dashed var(--border-hi);
+  border-radius: 9px;
+  padding: 5px 9px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.scene-add-btn:hover {
+  background: var(--accent);
+  color: #fff;
+  border-style: solid;
+  border-color: var(--accent);
+}
