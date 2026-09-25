@@ -3257,8 +3257,188 @@ input[type="number"]:focus { border-color: var(--accent); }
   #right-panel,
   #projects-modal,
   #export-banner,
-  #welcome-overlay,
-  #slicer-modal { display: none !important; }
+}
+
+/* ═══════════════════════════════════════════
+   SCENE STRIP
+═══════════════════════════════════════════ */
+#scene-strip {
+  position: absolute;
+  bottom: 66px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-hi);
+  border-radius: 14px;
+  padding: 5px 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 90%;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.05);
+  z-index: 45;
+  transition: all 0.2s ease;
+}
+
+.scene-strip-header {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 0 6px 0 3px;
+  border-right: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.scene-strip-title {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  color: var(--muted-hi);
+  text-transform: uppercase;
+}
+
+.scene-strip-badge {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+#scene-tabs-container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  max-width: 580px;
+  padding: 2px 1px;
+  scrollbar-width: thin;
+}
+
+#scene-tabs-container::-webkit-scrollbar {
+  height: 3px;
+}
+#scene-tabs-container::-webkit-scrollbar-thumb {
+  background: var(--border-hi);
+  border-radius: 2px;
+}
+
+.scene-pill {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.scene-pill:hover {
+  background: var(--panel);
+  border-color: var(--border-hi);
+}
+
+.scene-pill.active {
+  background: #ffffff;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent), 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.scene-pill.playing-scene {
+  border-color: var(--success);
+  box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.35);
+  animation: scene-pulse 1.2s infinite alternate;
+}
+
+@keyframes scene-pulse {
+  from { box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.2); }
+  to { box-shadow: 0 0 0 5px rgba(22, 163, 74, 0.5); }
+}
+
+.scene-pill-name {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.scene-pill-layers {
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--muted);
+  background: var(--surface-2);
+  padding: 1px 5px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.scene-transition-select {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--muted-hi);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1px 3px;
+  outline: none;
+  cursor: pointer;
+}
+.scene-transition-select:hover {
+  border-color: var(--border-hi);
+  color: var(--text);
+}
+
+.scene-pill-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: 2px;
+}
+
+.scene-mini-btn {
+  background: none;
+  border: none;
+  color: var(--muted);
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 10px;
+  transition: all 0.12s;
+}
+.scene-mini-btn:hover {
+  color: var(--accent2);
+  background: var(--accent-lo);
+}
+
+.scene-add-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--surface-1);
+  border: 1px dashed var(--border-hi);
+  border-radius: 9px;
+  padding: 5px 9px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.scene-add-btn:hover {
+  background: var(--accent);
+  color: #fff;
+  border-style: solid;
+  border-color: var(--accent);
 }
 
 </style>
@@ -3943,6 +4123,22 @@ input[type="number"]:focus { border-color: var(--accent); }
       <button class="crop-cancel-btn" onclick="cancelCrop()">Cancel</button>
       <button class="crop-confirm-btn" onclick="confirmCrop()">✓ Apply Crop</button>
     </div>
+
+    <!-- ════════ SCENE STRIP ════════ -->
+    <div id="scene-strip">
+      <div class="scene-strip-header">
+        <span class="scene-strip-title">SCENES</span>
+        <span class="scene-strip-badge" id="scene-count-badge">1 Scene</span>
+      </div>
+      <div id="scene-tabs-container">
+        <!-- Rendered dynamically -->
+      </div>
+      <button class="scene-add-btn" onclick="addNewScene()" title="Add a new scene to this video">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        <span>Add Scene</span>
+      </button>
+    </div>
+
     <div id="playbar">
       <button class="restart-btn" onclick="restartAnim()" title="Restart">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -4380,6 +4576,7 @@ function initDB() {
 // Save current state to project
 function saveProject(projectId = currentProjectId) {
   if (!db || !projectId) return;
+  if (typeof syncActiveSceneState === 'function') syncActiveSceneState();
   
   try {
   const transaction = db.transaction(['projects'], 'readwrite');
@@ -4448,7 +4645,34 @@ function saveProject(projectId = currentProjectId) {
         outlineDetect: state.outlineDetect,
         outlineAlgorithm: state.outlineAlgorithm,
         outlineStrokeStyle: state.outlineStrokeStyle,
-        colorStyle: state.colorStyle
+        colorStyle: state.colorStyle,
+        
+        // Multi-Scene state
+        scenes: state.scenes ? state.scenes.map(sc => ({
+          id: sc.id,
+          name: sc.name,
+          transition: sc.transition || 'eraser',
+          transitionDuration: sc.transitionDuration || 1.2,
+          canvasBg: sc.canvasBg,
+          layers: sc.layers ? sc.layers.map((layer, index) => ({
+            id: layer.id,
+            name: layer.name,
+            savedIndex: index,
+            imageDataURL: getImageDataURL(layer.img),
+            x: layer.x, y: layer.y, w: layer.w, h: layer.h,
+            baseW: layer.baseW, baseH: layer.baseH, resizePct: layer.resizePct,
+            animStyle: layer.animStyle, hand: layer.hand, animOrder: layer.animOrder,
+            opacity: layer.opacity, visible: layer.visible, groupId: layer.groupId,
+            speed: layer.speed, handSpeed: layer.handSpeed, chunks: layer.chunks,
+            specChunks: layer.specChunks, hasPngAlpha: layer.hasPngAlpha,
+            outlineDetect: layer.outlineDetect, outlineAlgorithm: layer.outlineAlgorithm,
+            outlineStrokeStyle: layer.outlineStrokeStyle, colorStyle: layer.colorStyle,
+            outlineColor: layer.outlineColor, outlineThickness: layer.outlineThickness,
+            textAnimDir: layer.textAnimDir, textDrawStyle: layer.textDrawStyle,
+            kind: layer.kind, textProps: layer.textProps,
+          })) : []
+        })) : [],
+        activeSceneId: state.activeSceneId
       };
       
       // Update project data
@@ -4655,6 +4879,15 @@ function loadProject(projectId) {
         // No layers - clear layer list
         renderLayerList();
         redrawLayersOnCanvas();
+      }
+      
+      // Restore scenes if available, or initialize
+      if (savedState.scenes && savedState.scenes.length > 0) {
+        state.scenes = savedState.scenes;
+        state.activeSceneId = savedState.activeSceneId || state.scenes[0].id;
+        renderSceneStrip();
+      } else {
+        initScenes();
       }
       
       // Update project name display
@@ -5716,6 +5949,11 @@ const state = {
   activeLayerIndex: 0,   // which layer is currently being animated in sequence
   groups: [],            // [{id, name, collapsed, visible, layerIds:[]}]
   _groupIdCounter: 0,
+  // ─── MULTI-SCENE ───
+  scenes: [],            // [{id, name, layers:[], groups:[], canvasBg, transition:'eraser', transitionDuration:1.2}]
+  activeSceneId: null,
+  _multiScenePlaying: false,
+  _multiSceneIdx: 0,
   // ─── PRESETS ───
   activePresetId: null,  // id of last applied preset; cleared when any setting is changed manually
   // ─── HAND MOVEMENT STYLE (global user preference, not saved per-project) ───
@@ -5907,6 +6145,406 @@ function fillBgOnCtx(c) { fillBg(c); }
 
 initCanvas(1280,720);
 window.addEventListener('resize', fitCanvas);
+
+// ─────────────────────────────────────────────
+// ── SCENE MANAGEMENT (Multi-Scene Engine)
+// ─────────────────────────────────────────────
+let _sceneIdCounter = 1;
+
+function initScenes() {
+  if (!state.scenes || state.scenes.length === 0) {
+    const defaultScene = {
+      id: 'scene_1',
+      name: 'Scene 1',
+      layers: state.layers || [],
+      groups: state.groups || [],
+      canvasBg: state.canvasBg ? JSON.parse(JSON.stringify(state.canvasBg)) : { type: 'solid', val: '#ffffff' },
+      transition: 'eraser',
+      transitionDuration: 1.2
+    };
+    state.scenes = [defaultScene];
+    state.activeSceneId = 'scene_1';
+  }
+  renderSceneStrip();
+}
+
+function getActiveScene() {
+  if (!state.scenes || state.scenes.length === 0) initScenes();
+  let s = state.scenes.find(sc => sc.id === state.activeSceneId);
+  if (!s) {
+    s = state.scenes[0];
+    state.activeSceneId = s.id;
+  }
+  return s;
+}
+
+function syncActiveSceneState() {
+  const current = getActiveScene();
+  if (current) {
+    current.layers = state.layers ? [...state.layers] : [];
+    current.groups = state.groups ? [...state.groups] : [];
+    current.canvasBg = state.canvasBg ? JSON.parse(JSON.stringify(state.canvasBg)) : { type: 'solid', val: '#ffffff' };
+  }
+}
+
+function switchScene(sceneId, isInternalPlayback = false) {
+  if (state.activeSceneId === sceneId && !isInternalPlayback) return;
+  
+  syncActiveSceneState();
+  
+  const target = state.scenes.find(sc => sc.id === sceneId);
+  if (!target) return;
+  
+  state.activeSceneId = sceneId;
+  state.layers = target.layers ? [...target.layers] : [];
+  state.groups = target.groups ? [...target.groups] : [];
+  state.selectedLayerId = null;
+  if (target.canvasBg) {
+    state.canvasBg = JSON.parse(JSON.stringify(target.canvasBg));
+  }
+  
+  ctx = _mainCtx;
+  state.bgCanvas = null;
+  redrawLayersOnCanvas();
+  renderLayerList();
+  renderSceneStrip();
+}
+
+function addNewScene(name = null) {
+  syncActiveSceneState();
+  const id = 'scene_' + (++_sceneIdCounter);
+  const newSceneName = name || ('Scene ' + (state.scenes.length + 1));
+  const newScene = {
+    id: id,
+    name: newSceneName,
+    layers: [],
+    groups: [],
+    canvasBg: state.canvasBg ? JSON.parse(JSON.stringify(state.canvasBg)) : { type: 'solid', val: '#ffffff' },
+    transition: 'eraser',
+    transitionDuration: 1.2
+  };
+  state.scenes.push(newScene);
+  switchScene(id);
+  if (typeof showToast === 'function') showToast(newSceneName + ' created');
+}
+
+function duplicateScene(sceneId, e) {
+  if (e) e.stopPropagation();
+  syncActiveSceneState();
+  const src = state.scenes.find(sc => sc.id === sceneId);
+  if (!src) return;
+  
+  const id = 'scene_' + (++_sceneIdCounter);
+  const clonedLayers = (src.layers || []).map(l => {
+    return { ...l, id: ++_layerIdCounter };
+  });
+  
+  const duplicated = {
+    id: id,
+    name: src.name + ' (Copy)',
+    layers: clonedLayers,
+    groups: JSON.parse(JSON.stringify(src.groups || [])),
+    canvasBg: JSON.parse(JSON.stringify(src.canvasBg || { type: 'solid', val: '#ffffff' })),
+    transition: src.transition || 'eraser',
+    transitionDuration: src.transitionDuration || 1.2
+  };
+  
+  const idx = state.scenes.findIndex(sc => sc.id === sceneId);
+  state.scenes.splice(idx + 1, 0, duplicated);
+  switchScene(id);
+  if (typeof showToast === 'function') showToast('Scene duplicated');
+}
+
+function deleteScene(sceneId, e) {
+  if (e) e.stopPropagation();
+  if (state.scenes.length <= 1) {
+    if (typeof showToast === 'function') showToast('Cannot delete the only scene');
+    return;
+  }
+  const idx = state.scenes.findIndex(sc => sc.id === sceneId);
+  if (idx === -1) return;
+  
+  state.scenes.splice(idx, 1);
+  const nextTarget = state.scenes[Math.max(0, idx - 1)];
+  state.activeSceneId = null;
+  switchScene(nextTarget.id);
+  if (typeof showToast === 'function') showToast('Scene deleted');
+}
+
+function changeSceneTransition(sceneId, transitionType, e) {
+  if (e) e.stopPropagation();
+  const sc = state.scenes.find(s => s.id === sceneId);
+  if (sc) {
+    sc.transition = transitionType;
+    renderSceneStrip();
+  }
+}
+
+function renameScene(sceneId, e) {
+  if (e) e.stopPropagation();
+  const sc = state.scenes.find(s => s.id === sceneId);
+  if (!sc) return;
+  const newName = prompt('Enter new scene name:', sc.name);
+  if (newName && newName.trim()) {
+    sc.name = newName.trim();
+    renderSceneStrip();
+  }
+}
+
+function renderSceneStrip() {
+  const container = document.getElementById('scene-tabs-container');
+  const countBadge = document.getElementById('scene-count-badge');
+  if (!container) return;
+  
+  if (!state.scenes || state.scenes.length === 0) initScenes();
+  
+  if (countBadge) {
+    countBadge.textContent = state.scenes.length === 1 ? '1 Scene' : `${state.scenes.length} Scenes`;
+  }
+  
+  container.innerHTML = '';
+  state.scenes.forEach((sc, idx) => {
+    const isActive = sc.id === state.activeSceneId;
+    const isPlaying = state._multiScenePlaying && state._multiSceneIdx === idx;
+    const layerCount = (sc.id === state.activeSceneId ? (state.layers?.length || 0) : (sc.layers?.length || 0));
+    
+    const pill = document.createElement('div');
+    pill.className = `scene-pill ${isActive ? 'active' : ''} ${isPlaying ? 'playing-scene' : ''}`;
+    pill.onclick = () => { if (!state.playing) switchScene(sc.id); };
+    
+    const info = document.createElement('div');
+    info.style.cssText = 'display:flex;align-items:center;gap:6px;';
+    info.innerHTML = `
+      <span class="scene-pill-name" title="Double click to rename" ondblclick="renameScene('${sc.id}', event)">${sc.name || ('Scene ' + (idx + 1))}</span>
+      <span class="scene-pill-layers">${layerCount} layer${layerCount === 1 ? '' : 's'}</span>
+    `;
+    pill.appendChild(info);
+    
+    if (idx < state.scenes.length - 1) {
+      const transSelect = document.createElement('select');
+      transSelect.className = 'scene-transition-select';
+      transSelect.title = 'Transition to next scene';
+      transSelect.onclick = (e) => e.stopPropagation();
+      transSelect.onchange = (e) => changeSceneTransition(sc.id, e.target.value, e);
+      transSelect.innerHTML = `
+        <option value="eraser" ${sc.transition === 'eraser' ? 'selected' : ''}>🧽 Eraser Wipe</option>
+        <option value="swipe"  ${sc.transition === 'swipe' ? 'selected' : ''}>✋ Hand Swipe</option>
+        <option value="fade"   ${sc.transition === 'fade' ? 'selected' : ''}>🌫️ Fade Out</option>
+        <option value="cut"    ${sc.transition === 'cut' ? 'selected' : ''}>✂️ Direct Cut</option>
+      `;
+      pill.appendChild(transSelect);
+    }
+    
+    const actions = document.createElement('div');
+    actions.className = 'scene-pill-actions';
+    
+    const dupBtn = document.createElement('button');
+    dupBtn.className = 'scene-mini-btn';
+    dupBtn.title = 'Duplicate Scene';
+    dupBtn.innerHTML = '⧉';
+    dupBtn.onclick = (e) => duplicateScene(sc.id, e);
+    actions.appendChild(dupBtn);
+    
+    if (state.scenes.length > 1) {
+      const delBtn = document.createElement('button');
+      delBtn.className = 'scene-mini-btn';
+      delBtn.title = 'Delete Scene';
+      delBtn.innerHTML = '✕';
+      delBtn.onclick = (e) => deleteScene(sc.id, e);
+      actions.appendChild(delBtn);
+    }
+    
+    pill.appendChild(actions);
+    container.appendChild(pill);
+  });
+}
+
+// ─────────────────────────────────────────────
+// ── SCENE TRANSITION RUNNER
+// ─────────────────────────────────────────────
+function runSceneTransition(transitionType, nextScene, onComplete) {
+  const W = state.canvasW;
+  const H = state.canvasH;
+  
+  const frozen = document.createElement('canvas');
+  frozen.width = W;
+  frozen.height = H;
+  const fctx = frozen.getContext('2d');
+  fctx.drawImage(canvas, 0, 0);
+  
+  if (transitionType === 'cut') {
+    hctx.clearRect(0, 0, W, H);
+    fillBg(_mainCtx);
+    onComplete();
+    return;
+  }
+  
+  if (transitionType === 'fade') {
+    const DURATION = 650;
+    const startTime = performance.now();
+    function stepFade(now) {
+      const p = Math.min(1, (now - startTime) / DURATION);
+      _mainCtx.save();
+      fillBg(_mainCtx);
+      _mainCtx.globalAlpha = 1 - p;
+      _mainCtx.drawImage(frozen, 0, 0);
+      _mainCtx.restore();
+      if (p < 1) {
+        requestAnimationFrame(stepFade);
+      } else {
+        hctx.clearRect(0, 0, W, H);
+        onComplete();
+      }
+    }
+    requestAnimationFrame(stepFade);
+    return;
+  }
+  
+  if (transitionType === 'swipe') {
+    const DURATION = 850;
+    const startTime = performance.now();
+    function stepSwipe(now) {
+      const p = Math.min(1, (now - startTime) / DURATION);
+      const ease = t => t < 0.5 ? 2*t*t : -1 + (4 - 2*t)*t;
+      const ep = ease(p);
+      const shiftX = -ep * W;
+      
+      _mainCtx.save();
+      fillBg(_mainCtx);
+      _mainCtx.drawImage(frozen, shiftX, 0);
+      _mainCtx.restore();
+      
+      hctx.clearRect(0, 0, W, H);
+      const handX = Math.round(W + shiftX);
+      const handY = Math.round(H * 0.45);
+      drawHand(hctx, handX, handY, 1, state.hand || 'custom1');
+      
+      if (p < 1) {
+        requestAnimationFrame(stepSwipe);
+      } else {
+        hctx.clearRect(0, 0, W, H);
+        fillBg(_mainCtx);
+        onComplete();
+      }
+    }
+    requestAnimationFrame(stepSwipe);
+    return;
+  }
+  
+  // Default: Whiteboard Eraser Wipe
+  const DURATION = 1350;
+  const startTime = performance.now();
+  const dustParticles = [];
+  for (let i = 0; i < 40; i++) {
+    dustParticles.push({
+      x: 0, y: 0,
+      vx: (Math.random() - 0.5) * 4,
+      vy: Math.random() * 3 + 1,
+      size: Math.random() * 3 + 1.5,
+      alpha: 0,
+      active: false
+    });
+  }
+  
+  function stepEraser(now) {
+    const elapsed = now - startTime;
+    const p = Math.min(1, elapsed / DURATION);
+    
+    const progressX = -60 + p * (W + 140);
+    const zigzagFreq = 6;
+    const zigzagY = (H * 0.5) + (H * 0.40) * Math.sin(p * Math.PI * 2 * zigzagFreq);
+    
+    _mainCtx.save();
+    _mainCtx.beginPath();
+    const wipeW = Math.max(0, progressX + 30);
+    _mainCtx.rect(0, 0, wipeW, H);
+    _mainCtx.arc(progressX + 10, zigzagY, 65, 0, Math.PI * 2);
+    _mainCtx.clip();
+    fillBg(_mainCtx);
+    _mainCtx.restore();
+    
+    hctx.clearRect(0, 0, W, H);
+    
+    if (Math.random() < 0.6) {
+      const pIndex = Math.floor(Math.random() * dustParticles.length);
+      const dp = dustParticles[pIndex];
+      dp.x = progressX + (Math.random() - 0.5) * 40;
+      dp.y = zigzagY + 25 + Math.random() * 10;
+      dp.alpha = 0.8;
+      dp.active = true;
+    }
+    
+    hctx.save();
+    dustParticles.forEach(dp => {
+      if (!dp.active) return;
+      dp.x += dp.vx;
+      dp.y += dp.vy;
+      dp.alpha *= 0.94;
+      if (dp.alpha < 0.05) dp.active = false;
+      else {
+        hctx.fillStyle = `rgba(180, 180, 180, ${dp.alpha})`;
+        hctx.beginPath();
+        hctx.arc(dp.x, dp.y, dp.size, 0, Math.PI * 2);
+        hctx.fill();
+      }
+    });
+    hctx.restore();
+    
+    // Draw Whiteboard Eraser Block on handCanvas
+    hctx.save();
+    const ew = 94;
+    const eh = 48;
+    const tilt = Math.cos(p * Math.PI * 2 * zigzagFreq) * 0.12;
+    hctx.translate(progressX, zigzagY);
+    hctx.rotate(tilt);
+    
+    hctx.shadowColor = 'rgba(0,0,0,0.22)';
+    hctx.shadowBlur = 12;
+    hctx.shadowOffsetX = 3;
+    hctx.shadowOffsetY = 6;
+    
+    const rad = 8;
+    hctx.fillStyle = '#1e293b';
+    hctx.beginPath();
+    hctx.roundRect(-ew/2, -eh/2, ew, eh * 0.68, [rad, rad, 2, 2]);
+    hctx.fill();
+    
+    hctx.strokeStyle = 'rgba(255,255,255,0.12)';
+    hctx.lineWidth = 1.5;
+    for (let gx = -ew/2 + 16; gx < ew/2 - 10; gx += 12) {
+      hctx.beginPath();
+      hctx.moveTo(gx, -eh/2 + 6);
+      hctx.lineTo(gx, -eh/2 + eh*0.68 - 6);
+      hctx.stroke();
+    }
+    
+    hctx.shadowColor = 'transparent';
+    hctx.fillStyle = '#0f172a';
+    hctx.beginPath();
+    hctx.roundRect(-ew/2 - 1, -eh/2 + eh*0.68, ew + 2, eh * 0.34, [0, 0, rad, rad]);
+    hctx.fill();
+    
+    hctx.fillStyle = '#cbd5e1';
+    hctx.fillRect(-ew/2 + 4, -eh/2 + eh*0.68, ew - 8, 2);
+    hctx.restore();
+    
+    const handHoldX = progressX + 12;
+    const handHoldY = zigzagY - 14;
+    drawHand(hctx, handHoldX, handHoldY, 1, state.hand || 'custom1');
+    
+    if (p < 1) {
+      requestAnimationFrame(stepEraser);
+    } else {
+      hctx.clearRect(0, 0, W, H);
+      fillBg(_mainCtx);
+      onComplete();
+    }
+  }
+  
+  requestAnimationFrame(stepEraser);
+}
+
+setTimeout(initScenes, 50);
 
 // ─────────────────────────────────────────────
 // ── LAYER MANAGEMENT
@@ -6116,15 +6754,88 @@ function _isDrawingGeneration() {
 }
 
 function generate() {
-  if (state.layers.length === 0) { showToast('Upload at least one image first'); return; }
+  syncActiveSceneState();
+  
+  if (state.scenes && state.scenes.length > 1) {
+    state._multiScenePlaying = true;
+    state._multiSceneIdx = 0;
+    _playMultiSceneAt(0);
+    return;
+  }
+  
+  state._multiScenePlaying = false;
+  if (state.layers.length === 0) { showToast('Upload at least one image or text layer first'); return; }
   if (_isDrawingGeneration()) {
     showTopbarBuffer();
-    // Two rAFs guarantee the browser has actually painted the indicator before the
-    // heavy synchronous outline/fill setup below runs and blocks the main thread.
     requestAnimationFrame(() => requestAnimationFrame(_generateNow));
   } else {
     _generateNow();
   }
+}
+
+function _playMultiSceneAt(sceneIdx) {
+  if (!state.scenes || sceneIdx >= state.scenes.length) {
+    _finishAllScenes();
+    return;
+  }
+  
+  state._multiSceneIdx = sceneIdx;
+  const currentScene = state.scenes[sceneIdx];
+  switchScene(currentScene.id, true);
+  
+  const styleLabel = document.getElementById('anim-style-label');
+  if (styleLabel) {
+    styleLabel.textContent = `${currentScene.name || ('Scene ' + (sceneIdx + 1))} (${sceneIdx + 1}/${state.scenes.length})`;
+  }
+  renderSceneStrip();
+  
+  // If scene is empty, wait slightly then advance to next scene
+  if (!state.layers || state.layers.length === 0) {
+    setTimeout(() => {
+      _checkNextSceneOrFinish();
+    }, 450);
+    return;
+  }
+  
+  if (_isDrawingGeneration()) {
+    showTopbarBuffer();
+    requestAnimationFrame(() => requestAnimationFrame(_generateNow));
+  } else {
+    _generateNow();
+  }
+}
+
+function _checkNextSceneOrFinish() {
+  if (state._multiScenePlaying && state.scenes && state.scenes.length > 1) {
+    const nextIdx = state._multiSceneIdx + 1;
+    if (nextIdx < state.scenes.length) {
+      const currentScene = state.scenes[state._multiSceneIdx];
+      const nextScene = state.scenes[nextIdx];
+      const transType = currentScene.transition || 'eraser';
+      
+      const styleLabel = document.getElementById('anim-style-label');
+      if (styleLabel) {
+        styleLabel.textContent = `Transition: ${transType.toUpperCase()}…`;
+      }
+      
+      runSceneTransition(transType, nextScene, () => {
+        _playMultiSceneAt(nextIdx);
+      });
+      return;
+    }
+  }
+  
+  _finishAllScenes();
+}
+
+function _finishAllScenes() {
+  state._multiScenePlaying = false;
+  document.getElementById('play-pause-btn').disabled = true;
+  document.getElementById('done-badge').classList.add('show');
+  document.getElementById('anim-style-label').textContent = '';
+  state.done = true;
+  hideTopbarBuffer();
+  renderSceneStrip();
 }
 
 function _generateNow() {
@@ -6337,11 +7048,7 @@ function _allLayersDone() {
 
   if (!shouldReveal) {
     _snap();
-    document.getElementById('play-pause-btn').disabled = true;
-    document.getElementById('done-badge').classList.add('show');
-    document.getElementById('anim-style-label').textContent = '';
-    state.done = true;
-    hideTopbarBuffer();
+    _checkNextSceneOrFinish();
     return;
   }
 
@@ -6354,11 +7061,7 @@ function _allLayersDone() {
     const el = (Date.now() - start) / dur;
     if (el >= 1) {
       _snap();
-      document.getElementById('play-pause-btn').disabled = true;
-      document.getElementById('done-badge').classList.add('show');
-      document.getElementById('anim-style-label').textContent = '';
-      state.done = true;
-      hideTopbarBuffer();
+      _checkNextSceneOrFinish();
       return;
     }
     const t = ease(el);
@@ -9611,6 +10314,9 @@ function recordMP4(progressText, progressBar) {
 
 function isExportAnimationComplete() {
   if (!state.done) return false;
+  if (state._multiScenePlaying && state.scenes && state.scenes.length > 1) {
+    return state._multiSceneIdx >= state.scenes.length - 1 && !state.playing;
+  }
   const groups = state._animGroups;
   if (!groups || !groups.length) return !!state.done;
   const groupPos = Number.isFinite(state._groupPos) ? state._groupPos : 0;
@@ -9618,6 +10324,14 @@ function isExportAnimationComplete() {
 }
 
 function getExportAnimationProgress() {
+  if (state._multiScenePlaying && state.scenes && state.scenes.length > 1) {
+    const totalScenes = state.scenes.length;
+    const curIdx = state._multiSceneIdx || 0;
+    const groups = state._animGroups;
+    const groupFrac = (!groups || !groups.length) ? (state.done ? 1 : 0) :
+      Math.max(0, Math.min(1, ((state._groupPos || 0) + (state._animProgress || 0)) / groups.length));
+    return Math.max(0, Math.min(1, (curIdx + groupFrac) / totalScenes));
+  }
   const groups = state._animGroups;
   if (!groups || !groups.length) return state.done ? 1 : 0;
   if (isExportAnimationComplete()) return 1;
