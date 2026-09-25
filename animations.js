@@ -1816,6 +1816,11 @@ function _slotOut(slot) {
 
 // Dispatch one tick for a single slot
 function _tickSlot(slot) {
+  // Kinetic Entrance dispatch (Hand Push-In, Pop / Bounce)
+  if (slot.layer && slot.layer.entranceStyle && slot.layer.entranceStyle !== 'draw' && typeof window.tickKineticEntrance === 'function') {
+    if (window.tickKineticEntrance(slot)) return;
+  }
+
   const speed = slot.layer.speed ?? parseInt(document.getElementById('speed-slider').value);
   // Temporarily push this layer's slider values so tick fns read correct values
   const _push = (id, v) => { const e=document.getElementById(id); if(e) e.value=v; };

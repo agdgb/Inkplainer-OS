@@ -17,6 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="scenes.css">
+<link rel="stylesheet" href="kinetic.css">
 <style>
 /* ── DESIGN TOKENS ── */
 :root {
@@ -5722,10 +5723,11 @@ window.addEventListener('load', () => {
 </script>
 
 <!-- ════════════════════════════════════════════════════════════════════════
-     ANIMATION ENGINE (external module)
+     ANIMATION, MULTI-SCENE & KINETIC ENGINE (external modules)
 ════════════════════════════════════════════════════════════════════════ -->
 <script src="animations.js"></script>
 <script src="scenes.js"></script>
+<script src="kinetic.js"></script>
 
 <script>
 // ─── POLYFILL ───
@@ -5966,6 +5968,8 @@ function fillBgOnCtx(c) { fillBg(c); }
 initCanvas(1280,720);
 window.addEventListener('resize', fitCanvas);
 
+// SCENE ENGINE (loaded from scenes.js)
+
 // ─────────────────────────────────────────────
 // ── LAYER MANAGEMENT
 // ─────────────────────────────────────────────
@@ -6006,7 +6010,14 @@ function addLayer(img, name) {
     handSpeed: 6,
     chunks: 30,
     specChunks: 35,
-    hasPngAlpha };
+    hasPngAlpha,
+    // Kinetic Motion properties
+    entranceStyle: 'draw',
+    pushDir: 'left',
+    afterAction: 'none',
+    cornerPreset: 'top-left',
+    moveScale: 0.40,
+    moveDuration: 0.85 };
   state.layers.push(layer);
   
   // Ensure canvas is properly fitted after adding layer
@@ -6174,6 +6185,7 @@ function _isDrawingGeneration() {
 }
 
 function generate() {
+  if (typeof window.restoreLayersOrigGeom === 'function') window.restoreLayersOrigGeom();
   syncActiveSceneState();
   
   if (state.scenes && state.scenes.length > 1) {
@@ -6193,70 +6205,6 @@ function generate() {
   }
 }
 
-function _playMultiSceneAt(sceneIdx) {
-  if (!state.scenes || sceneIdx >= state.scenes.length) {
-    _finishAllScenes();
-    return;
-  }
-  
-  state._multiSceneIdx = sceneIdx;
-  const currentScene = state.scenes[sceneIdx];
-  switchScene(currentScene.id, true);
-  
-  const styleLabel = document.getElementById('anim-style-label');
-  if (styleLabel) {
-    styleLabel.textContent = `${currentScene.name || ('Scene ' + (sceneIdx + 1))} (${sceneIdx + 1}/${state.scenes.length})`;
-  }
-  renderSceneStrip();
-  
-  // If scene is empty, wait slightly then advance to next scene
-  if (!state.layers || state.layers.length === 0) {
-    setTimeout(() => {
-      _checkNextSceneOrFinish();
-    }, 450);
-    return;
-  }
-  
-  if (_isDrawingGeneration()) {
-    showTopbarBuffer();
-    requestAnimationFrame(() => requestAnimationFrame(_generateNow));
-  } else {
-    _generateNow();
-  }
-}
-
-function _checkNextSceneOrFinish() {
-  if (state._multiScenePlaying && state.scenes && state.scenes.length > 1) {
-    const nextIdx = state._multiSceneIdx + 1;
-    if (nextIdx < state.scenes.length) {
-      const currentScene = state.scenes[state._multiSceneIdx];
-      const nextScene = state.scenes[nextIdx];
-      const transType = currentScene.transition || 'eraser';
-      
-      const styleLabel = document.getElementById('anim-style-label');
-      if (styleLabel) {
-        styleLabel.textContent = `Transition: ${transType.toUpperCase()}…`;
-      }
-      
-      runSceneTransition(transType, nextScene, () => {
-        _playMultiSceneAt(nextIdx);
-      });
-      return;
-    }
-  }
-  
-  _finishAllScenes();
-}
-
-function _finishAllScenes() {
-  state._multiScenePlaying = false;
-  document.getElementById('play-pause-btn').disabled = true;
-  document.getElementById('done-badge').classList.add('show');
-  document.getElementById('anim-style-label').textContent = '';
-  state.done = true;
-  hideTopbarBuffer();
-  renderSceneStrip();
-}
 
 function _generateNow() {
   // Commit any open text edit before generating
@@ -6633,6 +6581,72 @@ function _buildLayerItem(layer) {
         <div>W <input type="number" style="width:100%;margin-top:3px" value="${Math.round(layer.w)}" onchange="setLayerPos(${layer.id},'w',+this.value)"></div>
         <div>H <input type="number" style="width:100%;margin-top:3px" value="${Math.round(layer.h)}" onchange="setLayerPos(${layer.id},'h',+this.value)"></div>
       </div>
+      
+      <!-- ── Kinetic Movement & Staging ── -->
+      <div class="section-label" style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;">
+        <span>Kinetic Movement</span>
+        <span style="font-size:8px;font-weight:700;color:var(--accent);letter-spacing:0.5px;">CANVA / DOODLE</span>
+      </div>
+      
+      <div style="font-size:9px;color:var(--muted);margin-bottom:3px;margin-top:4px;">Entrance Style</div>
+      <div style="display:flex;gap:4px;margin-bottom:6px;">
+        <button class="kinetic-pill ${(!layer.entranceStyle || layer.entranceStyle==='draw') ? 'selected' : ''}"
+          onclick="event.stopPropagation();setLayerEntrance(${layer.id}, 'draw')">✏️ Draw</button>
+        <button class="kinetic-pill ${layer.entranceStyle==='hand_push' ? 'selected' : ''}"
+          onclick="event.stopPropagation();setLayerEntrance(${layer.id}, 'hand_push')">✋ Push-In</button>
+        <button class="kinetic-pill ${layer.entranceStyle==='pop' ? 'selected' : ''}"
+          onclick="event.stopPropagation();setLayerEntrance(${layer.id}, 'pop')">💥 Pop</button>
+      </div>
+      ${layer.entranceStyle === 'hand_push' ? `
+      <div style="display:flex;align-items:center;gap:4px;margin-bottom:6px;">
+        <span style="font-size:9px;color:var(--muted)">Push from:</span>
+        <select style="font-size:10px;padding:2px 4px;background:var(--panel);border:1px solid var(--border);border-radius:5px;color:var(--text);"
+          onclick="event.stopPropagation()"
+          onchange="event.stopPropagation();setLayerPushDir(${layer.id}, this.value)">
+          <option value="left" ${layer.pushDir==='left'?'selected':''}>Left Edge</option>
+          <option value="right" ${layer.pushDir==='right'?'selected':''}>Right Edge</option>
+          <option value="top" ${layer.pushDir==='top'?'selected':''}>Top Edge</option>
+          <option value="bottom" ${layer.pushDir==='bottom'?'selected':''}>Bottom Edge</option>
+        </select>
+      </div>` : ''}
+
+      <div style="font-size:9px;color:var(--muted);margin-bottom:3px;margin-top:6px;">After Draw Action</div>
+      <div style="display:flex;gap:4px;margin-bottom:6px;flex-wrap:wrap;">
+        <button class="kinetic-pill ${(!layer.afterAction || layer.afterAction==='none') ? 'selected' : ''}"
+          onclick="event.stopPropagation();setLayerAfterAction(${layer.id}, 'none')">⏹️ Stay</button>
+        <button class="kinetic-pill ${layer.afterAction==='glide_corner' ? 'selected' : ''}"
+          onclick="event.stopPropagation();setLayerAfterAction(${layer.id}, 'glide_corner')">↗️ Glide to Corner</button>
+        <button class="kinetic-pill ${layer.afterAction==='push_out' ? 'selected' : ''}"
+          onclick="event.stopPropagation();setLayerAfterAction(${layer.id}, 'push_out')">✋ Push Out</button>
+        <button class="kinetic-pill ${layer.afterAction==='fade_out' ? 'selected' : ''}"
+          onclick="event.stopPropagation();setLayerAfterAction(${layer.id}, 'fade_out')">🌫️ Fade Out</button>
+      </div>
+
+      ${layer.afterAction === 'glide_corner' ? `
+      <div style="background:var(--surface-2);border-radius:7px;padding:6px 8px;margin-bottom:8px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;">
+          <span style="font-size:9px;color:var(--muted);font-weight:600;">Corner:</span>
+          <select style="font-size:10px;padding:2px 4px;background:var(--panel);border:1px solid var(--border);border-radius:5px;color:var(--text);"
+            onclick="event.stopPropagation()"
+            onchange="event.stopPropagation();setLayerCornerPreset(${layer.id}, this.value)">
+            <option value="top-left" ${layer.cornerPreset==='top-left'?'selected':''}>Top-Left</option>
+            <option value="top-right" ${layer.cornerPreset==='top-right'?'selected':''}>Top-Right</option>
+            <option value="bottom-left" ${layer.cornerPreset==='bottom-left'?'selected':''}>Bottom-Left</option>
+            <option value="bottom-right" ${layer.cornerPreset==='bottom-right'?'selected':''}>Bottom-Right</option>
+          </select>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;">
+          <span style="font-size:9px;color:var(--muted)">Corner Scale:</span>
+          <span class="corner-scale-val-${layer.id}" style="font-size:10px;color:var(--text);font-weight:600;">${Math.round((layer.moveScale || 0.4) * 100)}%</span>
+        </div>
+        <input type="range" min="15" max="85" value="${Math.round((layer.moveScale || 0.4) * 100)}"
+          style="width:100%;margin-bottom:6px;"
+          onclick="event.stopPropagation()"
+          oninput="event.stopPropagation();setLayerMoveScale(${layer.id}, +this.value/100);const el = this.closest('div').querySelector('.corner-scale-val-${layer.id}'); if(el) el.textContent=this.value+'%'">
+        <button class="kinetic-test-btn" onclick="event.stopPropagation();previewLayerKineticMotion(${layer.id})" title="Preview this motion on canvas">
+          ▶ Test Glide Motion
+        </button>
+      </div>` : ''}
     </div>`;
 
   // Wire dblclick on the layer-name via addEventListener so it survives
@@ -8674,6 +8688,13 @@ function _commitTextLayer(text) {
       _textColor:      color,
       _textLineHeight: lh,
       _textSpacing:    sp,
+      // Kinetic Motion properties
+      entranceStyle: _oldLayer?.entranceStyle || 'draw',
+      pushDir:       _oldLayer?.pushDir || 'left',
+      afterAction:   _oldLayer?.afterAction || 'none',
+      cornerPreset:  _oldLayer?.cornerPreset || 'top-left',
+      moveScale:     _oldLayer?.moveScale || 0.40,
+      moveDuration:  _oldLayer?.moveDuration || 0.85,
     };
     // Replace placeholder (edit) or append (new)
     const phIdx = state.layers.indexOf(null);
@@ -8932,6 +8953,8 @@ function animate() {
 
 function resetAnim() {
   cancelAnimationFrame(state.animFrame);
+  if (typeof window.restoreLayersOrigGeom === 'function') window.restoreLayersOrigGeom();
+  state._afterActionDone = false;
   // Clean up any active parallel slots
   state._activeSlots  = [];
   state._currentSlot  = null;
@@ -8999,8 +9022,17 @@ function finishAnim() {
   // ── SLOT PATH (parallel animation) ──────────────────────────────────────────
   const slot = state._currentSlot;
   if (slot) {
+    // Kinetic After-Action Hook (Glide to Corner, Push Out, Fade Out)
+    if (slot.layer && slot.layer.afterAction && slot.layer.afterAction !== 'none' && !slot._afterActionDone && typeof window.executeLayerAfterAction === 'function') {
+      window.executeLayerAfterAction(slot, () => {
+        slot._afterActionDone = true;
+        finishAnim();
+      });
+      return;
+    }
+
     // Bake this slot's completed result into the shared bgCanvas
-    if (state.bgCanvas) {
+    if (state.bgCanvas && (!slot.layer || !slot.layer._clearedFromCanvas)) {
       const bc = state.bgCanvas.getContext('2d');
       if (_shouldBakeRawImage) {
         const l = slot.layer;
@@ -9038,8 +9070,15 @@ function finishAnim() {
     const layer = (state._animQueue && state._animQueue[state._queuePos])
       ? state._animQueue[state._queuePos]
       : state.layers[state.activeLayerIndex];
+    if (layer && layer.afterAction && layer.afterAction !== 'none' && !state._afterActionDone && typeof window.executeLayerAfterAction === 'function') {
+      window.executeLayerAfterAction({ layer, ctx: _mainCtx, canvas }, () => {
+        state._afterActionDone = true;
+        finishAnim();
+      });
+      return;
+    }
     if (_shouldBakeRawImage) {
-      if (layer) {
+      if (layer && !layer._clearedFromCanvas) {
         bc.save(); bc.globalAlpha = (layer.opacity !== undefined ? layer.opacity : 1);
         bc.drawImage(layer.img, layer.x, layer.y, layer.w, layer.h);
         bc.restore();
